@@ -1,8 +1,9 @@
 const fs = require("fs/promises");
 const http = require("http");
 const url = require("url");
-const replaceTemplate = require('./modules/replaceTemplate');
-const parseJson = require('./modules/parseJson');
+const slugify = require("slugify");
+const replaceTemplate = require("./modules/replaceTemplate");
+const parseJson = require("./modules/parseJson");
 
 // const textInput = fs.readFileSync('./txt/input.txt', 'utf-8');
 
@@ -36,18 +37,18 @@ const parseJson = require('./modules/parseJson');
 //   output = output.replace(/{%QUANTITY%}/g, product.quantity);
 //   output = output.replace(/{%DESCRIPTION%}/g, product.description);
 //   output = output.replace(/{%ID%}/g, product.id);
-  
+
 //   if(!product.organic) output = output.replace(/{%NOT_ORGANIC%}/g, 'not-organic');
 //   return output;
 // }
 
 const readDataFiles = (route) => {
-  const data = fs.readFile(`${__dirname}${route}`,  {
+  const data = fs.readFile(`${__dirname}${route}`, {
     encoding: "utf-8",
   });
 
-  return data
-}
+  return data;
+};
 
 // TODO: Server
 
@@ -68,12 +69,16 @@ async function readFilesJson(resp) {
 
 async function readOverviewTemplate(resp) {
   try {
-    const tempOverview = await readDataFiles("/templates/template-overview.html");
+    const tempOverview = await readDataFiles(
+      "/templates/template-overview.html"
+    );
     const dataCardsObj = await readDataFiles("/dev-data/data.json");
     const tempCard = await readDataFiles("/templates/template-card.html");
     const productData = JSON.parse(dataCardsObj);
-    const cardHtml = productData.map(el => replaceTemplate(tempCard, el)).join('');
-    const output = tempOverview.replace('{%PRODUCTS_CARDS%}', cardHtml);
+    const cardHtml = productData
+      .map((el) => replaceTemplate(tempCard, el))
+      .join("");
+    const output = tempOverview.replace("{%PRODUCTS_CARDS%}", cardHtml);
     resp.writeHead(200, {
       "Content-Type": "text/html",
     });
@@ -90,7 +95,7 @@ async function readProductTemplate(resp, query) {
     const dataJson = await readDataFiles("/dev-data/data.json");
     const dataObj = JSON.parse(dataJson);
     const product = dataObj[query.id];
-    const output = replaceTemplate(tempProduct, product)
+    const output = replaceTemplate(tempProduct, product);
     resp.writeHead(200, {
       "Content-Type": "text/html",
     });
@@ -101,7 +106,7 @@ async function readProductTemplate(resp, query) {
 }
 
 const server = http.createServer((req, resp) => {
-  const {query, pathname} = url.parse(req.url, true);
+  const { query, pathname } = url.parse(req.url, true);
 
   // OLD PathName
   // const pathName = req.url;

@@ -41,10 +41,11 @@ const replaceTemplate = (temp, product) => {
   output = output.replace(/{%QUANTITY%}/g, product.quantity);
   output = output.replace(/{%DESCRIPTION%}/g, product.description);
   output = output.replace(/{%ID%}/g, product.id);
-  
-  if(!product.organic) output = output.replace(/{%NOT_ORGANIC%}/g, 'not-organic');
+
+  if (!product.organic)
+    output = output.replace(/{%NOT_ORGANIC%}/g, "not-organic");
   return output;
-}
+};
 
 async function readFilesJson(resp) {
   try {
@@ -64,18 +65,26 @@ async function readFilesJson(resp) {
 
 async function readOverviewTemplate(resp) {
   try {
-    const tempOverview = await fs.readFile(`${__dirname}/templates/template-overview.html`, {
-      encoding: "utf-8",
-    });
+    const tempOverview = await fs.readFile(
+      `${__dirname}/templates/template-overview.html`,
+      {
+        encoding: "utf-8",
+      }
+    );
     const dataCardsObj = await fs.readFile(`${__dirname}/dev-data/data.json`, {
       encoding: "utf-8",
     });
-    const tempCard = await fs.readFile(`${__dirname}/templates/template-card.html`, {
-      encoding: "utf-8",
-    });
+    const tempCard = await fs.readFile(
+      `${__dirname}/templates/template-card.html`,
+      {
+        encoding: "utf-8",
+      }
+    );
     const productData = JSON.parse(dataCardsObj);
-    const cardHtml = productData.map(el => replaceTemplate(tempCard, el)).join('');
-    const output = tempOverview.replace('{%PRODUCTS_CARDS%}', cardHtml);
+    const cardHtml = productData
+      .map((el) => replaceTemplate(tempCard, el))
+      .join("");
+    const output = tempOverview.replace("{%PRODUCTS_CARDS%}", cardHtml);
     resp.writeHead(200, {
       "Content-type": "text/html",
     });
