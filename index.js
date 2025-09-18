@@ -133,6 +133,6 @@ const server = http.createServer((req, resp) => {
   console.log(pathname);
 });
 
-server.listen(8000, "192.168.100.8", () => {
+server.listen(8000, "192.168.1.8", () => {
   console.log("Listening to request on port 8000");
 });
